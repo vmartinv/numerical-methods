@@ -1,3 +1,4 @@
+funcprot(0)
 exec('./find_roots.sci',-1)
 
 /////////////////////////////////////////////////////////////////
@@ -96,3 +97,29 @@ disp("Con 40 iteraciones [x, y]=")
 x=newton(f, jf, [-1; 4], 40)
 disp(x)
 disp(f(x))
+
+/////////////////////////////////////////////////////////////////
+disp("==Ejercicio 3.a==")
+function r=f(x)
+    k1=x(1); k2=x(2); k3=x(3);
+    deff('r=ec(p, r)', 'r = k1*%e^(k2*r) + k3*r - p')
+    r=[ec(10, 1);ec(12, 2);ec(15, 3)];
+endfunction
+deff('r=jf(x)','r=numderivative(f,x,0.0001)')
+rand('seed', 2342345)
+while %T
+    try
+        x=newton(f, jf, [rand(); rand(); rand()], 50);
+        if find(isnan(x)) then continue; else break; end
+    catch
+        continue
+    end
+end
+k1=x(1); k2=x(2); k3=x(3);
+disp("k1="+string(k1)+", k2="+string(k2)+", k3="+string(k3))
+
+/////////////////////////////////////////////////////////////////
+disp("==Ejercicio 3.b==")
+deff('d=f(r)', 'd = k1*%e^(k2*r) + k3*r - 500')
+r=biseccion(f, 1, 500, biseccionError(1, 500, 10^-12))
+disp('r>='+string(r)+' pulgadas')
