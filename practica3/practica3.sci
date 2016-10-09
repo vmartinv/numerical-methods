@@ -1,4 +1,5 @@
 funcprot(0)
+chdir('~/metodos/numerical-methods/practica3')
 exec('./find_roots.sci',-1)
 
 /////////////////////////////////////////////////////////////////
@@ -123,3 +124,58 @@ disp("==Ejercicio 3.b==")
 deff('d=f(r)', 'd = k1*%e^(k2*r) + k3*r - 500')
 r=biseccion(f, 1, 500, biseccionError(1, 500, 10^-12))
 disp('r>='+string(r)+' pulgadas')
+
+/////////////////////////////////////////////////////////////////
+disp("==Ejercicio 4.3==")
+deff('r=f(x)', 'r=sin(x/2)-1')
+x=secante(f, 3, 3.18, 15)
+disp('a) x='+string(x)+", f(x)="+string(f(x)))
+
+deff('r=f(x)', 'r=%e^x - tan(x)')
+x=secante(f, -4, 2, 10)
+disp('b) x='+string(x)+", f(x)="+string(f(x)))
+
+deff('r=f(x)', 'r=x^3-12*x^2+3*x+1')
+//x=[0:0.01:50]; plot(x, f(x))
+x=secante(f, -1, -2, 10)
+disp('c) x='+string(x)+", f(x)="+string(f(x)))
+
+/////////////////////////////////////////////////////////////////
+disp("==Ejercicio 4.7==")
+deff('r=f(x)', 'r=2-(x-1)/2')
+x=secante(f, 1, 2, 1)
+disp('x_2='+string(x))
+
+/////////////////////////////////////////////////////////////////
+disp("==Ejercicio 4.8.a)==")
+deff('r=f(x)', 'r=atan(x)-2*x/(1+x^2)')
+x=biseccion(f, -2, -1, 200, %eps/2)
+disp('Met. biseccion: x='+string(x)+', f(x)='+string(f(x)))
+
+deff('r=df(x)','r=numderivative(f,x,0.0001)')
+x=newton(f, df, 0.5, 10)
+disp('Met. newton: x='+string(x)+', f(x)='+string(f(x)))
+
+x=secante(f, 0.5, 1, 10)
+disp('Met. secante: x='+string(x)+', f(x)='+string(f(x)))
+
+x=biseccion(f, -0.5, 0.5, 200)
+disp('Met. biseccion: x='+string(x)+', f(x)='+string(f(x)))
+
+deff('r=df(x)','r=numderivative(f,x,0.0001)')
+x=newton(f, df, -0.1, 50, 0)
+disp('Met. newton: x='+string(x)+', f(x)='+string(f(x)))
+
+x=secante(f, -0.5, -0.1, 10, %eps)
+disp('Met. secante: x='+string(x)+', f(x)='+string(f(x)))
+
+/////////////////////////////////////////////////////////////////
+disp("==Ejercicio 4.8.b)==")
+deff('r=f(x)', 'r=atan(x)')
+deff('r=df(x)','r=numderivative(f,x,0.0001)')
+x=newton(f, df, 0, 50, 0)
+disp('x='+string(x)+', f(x)='+string(f(x)))
+
+/////////////////////////////////////////////////////////////////
+disp("==Ejercicio 4.11==")
+disp("La formula es equivalente trivialmente. Es peor porque usa mas multiplicaciones. ")
