@@ -80,22 +80,8 @@ disp("La derivada en 2 tiene un valor muy bajo (descomentar el plot). Por lo que
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 2.33==")
-deff('r=f(x)','r=[1+(x(1))^2+(x(2))^2+(%e^x(1))*cos(x(2)); 2*x(1)*x(2)+%e^x(1)*sin(x(2))]')
+deff('r=f(x)','r=[1+(x(1))^2+(x(2))^2+(%e^x(1))*cos(x(2)); 2*x(1, 1)*x(2)+%e^x(1)*sin(x(2))]')
 deff('r=jf(x)','r=numderivative(f,x,0.0001)')
-x=[-10:0.01:10]
-xx = linspace(-10,10,40);
-yy = linspace(-10,10,40);
-
-function z=f2(x, y)
-    a=[x;y];
-    disp("x="+string(x))
-    z=f(a)(1)
-    disp(z)
-endfunction
-//deff('z=f2(x, y)', 'z=(f([x;y]))(3)')
-zz = feval(xx, yy, f2)';
-surf(xx,yy,zz)
-
 disp("Notamos que el metodo tarda muchas iteraciones en converger")
 
 disp("Con 10 iteraciones [x, y]=")
