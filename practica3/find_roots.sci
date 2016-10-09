@@ -1,5 +1,6 @@
+//// Metodo de la biseccion
 function r = biseccion(f,a,b,its)
-    if sign(f(a)) == sign(f(b)) then printf("Bad preconditions"); return; end
+    if sign(f(a)) == sign(f(b)) then printf("Bad preconditions"); abort end
     for i=1:its do
         c = a+(b-a)/2;
         if sign(f(a)) == sign(f(c)) then a=c
@@ -9,7 +10,7 @@ function r = biseccion(f,a,b,its)
     r = a+(b-a)/2;
 endfunction
 
-function r=biseccionError(a,b,err)
-    r=ceil(max(0,log2((b-a)/abs(a)/err)-1));
+//// Devuelve el numero de iteraciones necesarias para alcanzar tal error
+function its = biseccionError(a,b,err)
+    its = ceil(max(0,log2((b-a)/abs(a)/err)-1));
 endfunction
-
