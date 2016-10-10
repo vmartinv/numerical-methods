@@ -1,5 +1,4 @@
 funcprot(0)
-chdir('~/metodos/numerical-methods/practica3')
 exec('./find_roots.sci',-1)
 
 /////////////////////////////////////////////////////////////////

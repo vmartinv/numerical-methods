@@ -1,0 +1,5 @@
+#!/bin/bash
+SRC=$1
+cd $(dirname "$SRC")
+SRC=$(basename "$SRC")
+scilab-cli -e "exec('"$SRC"', -1); quit();" -nb
