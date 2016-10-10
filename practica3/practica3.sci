@@ -165,7 +165,7 @@ deff('r=df(x)','r=numderivative(f,x,0.0001)')
 x=newton(f, df, -0.1, 50, 0)
 disp('Met. newton: x='+string(x)+', f(x)='+string(f(x)))
 
-x=secante(f, -0.5, -0.1, 10, %eps)
+x=secante(f, -0.5, -0.1, 10, 10^-25)
 disp('Met. secante: x='+string(x)+', f(x)='+string(f(x)))
 
 /////////////////////////////////////////////////////////////////

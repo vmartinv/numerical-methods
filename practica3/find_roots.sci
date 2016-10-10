@@ -1,11 +1,7 @@
 //// Metodo de la biseccion
-function r = biseccion(f,a,b,its,eps,delta)
-    if ~exists("eps","local") then
-        eps = %eps
-    end
-    if ~exists("delta","local") then
-        delta = %eps
-    end
+function c = biseccion(f,a,b,its,eps,delta)
+    if ~exists("eps","local") then eps = %eps; end
+    if ~exists("delta","local") then delta = %eps; end
     if sign(f(a)) == sign(f(b)) then printf("Bad preconditions"); abort end
     for i=1:its do
         c = a+(b-a)/2;
@@ -14,7 +10,6 @@ function r = biseccion(f,a,b,its,eps,delta)
         else b=c;
         end
     end
-    r = a+(b-a)/2;
 endfunction
 
 //// Devuelve el numero de iteraciones necesarias para alcanzar tal error
@@ -32,9 +27,7 @@ endfunction
 // deff('r=f(x)','r=[x(1)^2+x(1)*x(2)^3-9;3*x(1)^2*x(2)-4-x(2)^3]')
 // deff('r=jf(x)','r=numderivative(f,x,0.0001)')
 function xi=newton(f,df,x0,its,eps)
-    if ~exists("eps","local") then
-        eps = %eps
-    end
+    if ~exists("eps","local") then eps = %eps; end
     xi = x0;
     for i=1:its
         xi = xi - inv(df(xi))*f(xi);
@@ -44,10 +37,9 @@ function xi=newton(f,df,x0,its,eps)
 endfunction
 
 //// Metodo de la secante
-function xn=secante(f,x0,x1,its,eps)
-    if ~exists("eps","local") then
-        eps = %eps
-    end
+function xn=secante(f,x0,x1,its,eps,delta)
+    if ~exists("eps","local") then eps = %eps; end
+    if ~exists("delta","local") then delta = %eps; end
     xn_1 = x0; fxn_1 = f(xn_1);
     xn = x1; fxn = f(xn);
     for i=1:its
@@ -63,6 +55,6 @@ function xn=secante(f,x0,x1,its,eps)
         xnext = xn - fxn * (xn-xn_1)/(fxn-fxn_1);
         xn_1 = xn; fxn_1 = f(xn_1);
         xn = xnext; fxn = f(xn);
-        //if abs(fxn) < eps | abs(xn-xn_1) < delta then break; end
+        if abs(fxn) < eps | abs(xn-xn_1) < delta then break; end
     end
 endfunction
