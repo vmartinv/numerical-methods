@@ -29,9 +29,10 @@ endfunction
 function xi=newton(f,df,x0,its,eps)
     if ~exists("eps","local") then eps = %eps; end
     xi = x0;
+    if abs(f(xi))<eps then break; end
     for i=1:its
         xi = xi - inv(df(xi))*f(xi);
-        if abs(x0-xi)<eps then break; end
+        if abs(x0-xi)<eps | abs(f(xi))<eps then break; end
         x0 = xi
     end
 endfunction
