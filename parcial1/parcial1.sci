@@ -126,6 +126,7 @@ disp(etaylor(100, -12));
 disp("Vemos que en las primeras iteraciones hay una gran variacion en el resultado.");
 disp("El error se puede observar mirando el error del polinomio de Taylor de grado n:");
 disp("e^eps * (-12)^n / (n+1)! con eps entre 0 y -12");
+disp("Para valores pequeños de n, el termino (-12)^n va a ser muy grande, mientras que e^eps / (n+1)! va a ser relativamente pequeño.");
 
 
 disp("Aproximaremos e^-12 utilizando e=lim (1+1/n)^n cuando n->inf");
