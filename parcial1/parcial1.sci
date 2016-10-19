@@ -8,11 +8,11 @@ function err=etaylor(n, x)
     fact=1;
     r=0;
     err=[];
-    for i=1:n
-        r=r+x^(i-1)/fact;
-        fact=fact * i;
-        err(i)(1) = i;
-        err(i)(2) = abs(e12-r);
+    for i=0:n
+        r=r+x^i/fact;
+        fact=fact * (i+1);
+        err(i+1)(1) = i;
+        err(i+1)(2) = abs(e12-r);
     end
 endfunction
 
