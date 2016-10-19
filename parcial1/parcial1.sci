@@ -18,7 +18,7 @@ endfunction
 
 disp("Utilizando el desarrollo de Taylor, se obtienen los siguientes errores:");
 disp("   n       |Error");
-disp(etaylor(100, -12))
+disp(etaylor(100, -12));
 //~ n       |Error
 //~ 1.      0.9999939  
 //~ 2.      11.000006  
@@ -158,13 +158,17 @@ disp("Ejercicio 3");
 
 disp("Ejercicio 3.a");
 deff('r=f(x)','r=x^3-log(1+2*x)');
-//plot([1:0.001:2],f);
+disp("Se muestra el grafico de la funcion, donde se ve una raiz cercana al 1.");
+plot([1:0.001:2],f);
 
 
 disp("Ejercicio 3.b");
 disp("Se puede usar el metodo de Steffensen, el cual viene dado por:")
-disp("x_{n+1} = x_n + f(x_n)^2/(f(x_n+f(x_n)) - f(x_n))")
-//Utilizo el metodo de steffensen
+disp("x_{n+1} = x_n + f(x_n)/g(x_n)")
+disp(", donde g(x) = (f(x_n+f(x_n)) - f(x_n))/f(x_n)");
+disp("La funcion g es la pendiente de la funcion entre (x_n, f(x_n)) y el punto auxiliar (x_n+h, f(x_n+h), con h=f(x_n).");
+disp("Cuando se provee un valor lo suficientemente cercano a la raiz, h va a ser pequeño y g(x_n) es una buena aproximacion de f''(x_n).");
+disp("En otras palabras, cuando el valor es elegido correctamente el metodo se comporta como el de Newton, el cual converge.");
 
 function xi=steff(f,x0,its,eps)
     if ~exists("eps","local") then eps = %eps; end
@@ -185,7 +189,7 @@ r=steff(f,1,200);
 
 disp("Ejercicio 3.c");
 function tab=tabla(f,x0,r)
-    tab=[]
+    tab=[];
     for j=4:20
         tab(j-3)(1)=10^-j
         for i=1:100
