@@ -174,23 +174,81 @@ function test(A, b, sol)
   disp(Solve(A, b, Gauss) - sol, "Gauss con criterio de eleccion de pivote:");
   disp(inv(A)*b - sol, "Usando matriz inversa:");
 endfunction
+ 
 disp("a)");
 A=[10^-12 1;1 1];
 b=[1; 2];
 sol=[1/(1 - 10^-12); (1 - 2*10^-12)/(1 - 10^-12)];
 test(A, b, sol);
+// Gauss con pivoteo cualquiera:   
+// 0.  
+// 0.  
+
+// Gauss con criterio de eleccion de pivote:   
+// 0.  
+// 0. 
+ 
+// Usando matriz inversa:   
+// 0.         
+// 1.110D-16  
 
 disp("b)");
 A=[4 5 -6;2 0 -7; -5 -8 0];
 b=[-28; 29; -64];
 sol=[5200/47; -2874/47; 1291/47];
 test(A, b, sol);
+// Gauss con pivoteo cualquiera:   
+// 10^(-13) *
+//    - 0.1421085  
+//    0.0710543  
+//    - 0.0355271  
+
+// Gauss con criterio de eleccion de pivote:   
+// 10^(-13) *
+//    - 0.1421085  
+//    0.0710543  
+//    - 0.0355271  
+
+// Usando matriz inversa:   
+// 10^(-13) *
+//    0.2842171  
+//    - 0.1421085  
+//    0.1065814  
+
 
 disp("c)");
 A=[1 2 -1 0 0 3 1; 1 2 2 1 -4 1 0; 0 1 -1 3 -3 0 0; 0 1 -1 2 1 1 0; 0 0 1 -2 1 0 1; 0 0 0 2 0 0 3; 0 0 0 1 1 -1 0];
 b=[-2; -2; 2; 5; -7; -8; 2];
 sol=[1; -1; 0; 2; 1; 1; -4];
 test(A, b, sol);
+// Gauss con pivoteo cualquiera:   
+// 10^(-14) *
+//    - 0.3552714  
+//    0.1776357  
+//    0.         
+//    - 0.0888178  
+//    - 0.0222045  
+//    0.         
+//    0.         
+
+// Gauss con criterio de eleccion de pivote:   
+// 0.         
+// 1.221D-15  
+// - 2.961D-16  
+// - 4.441D-16  
+// 2.220D-16  
+// - 5.551D-16  
+// - 8.882D-16  
+
+// Usando matriz inversa:   
+// 10^(-14) *
+//    - 0.1776357  
+//    0.0888178  
+//    - 0.0777156  
+//    - 0.1110223  
+//    0.         
+//    0.1110223  
+//    - 0.0888178 
 
 
 
