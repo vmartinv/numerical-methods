@@ -1,3 +1,9 @@
+//LCC - Metodos Numericos
+//Trabajo Practico 2
+//Integrantes:
+//    Matias Saper
+//    Martin Villagra
+
 funcprot(0);
 
 /////////////////////////////////////////////////////////////////
