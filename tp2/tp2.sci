@@ -262,6 +262,11 @@ A=[1 2 -1 0 0 3 1; 1 2 2 1 -4 1 0; 0 1 -1 3 -3 0 0; 0 1 -1 2 1 1 0; 0 0 1 -2 1 0
 b=[-2; -2; 2; 5; -7; -8; 2];
 sol=[1; -1; 0; 2; 1; 1; -4];
 test(A, b, sol);
+
+
+// No podemos realizar el algoritmo sin pivoteo por quedarnos 0 como pivoteos
+
+
 // Gauss con pivoteo cualquiera:   
 // 10^(-14) *
 //    - 0.3552714  
