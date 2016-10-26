@@ -3,6 +3,7 @@
 //Integrantes:
 //    Matias Saper
 //    Martin Villagra
+//    Ciro Barbagelata
 
 funcprot(0);
 
@@ -170,6 +171,7 @@ function x=Solve(A, b, gauss)
 endfunction
 
 function test(A, b, sol)
+  //disp(Solve(A, b, GaussSinPivoteo) - sol, "Gauss sin pivoteo:");
   disp(Solve(A, b, GaussPivoteo) - sol, "Gauss con pivoteo cualquiera:");
   disp(Solve(A, b, Gauss) - sol, "Gauss con criterio de eleccion de pivote:");
   disp(inv(A)*b - sol, "Usando matriz inversa:");
@@ -192,11 +194,43 @@ test(A, b, sol);
 // 0.         
 // 1.110D-16  
 
+
+
+// El problema de realizar el algoritmo de Gauss sin pivoteo es que el elemento en (1,1) es 10^-12 < epsilon de la maquina, por lo que
+// tendremos que intercambiar filas para  lograr que el algoritmo funcione.
+//En los casos con pivoteo, al intercambiar las filas no sufrimos del problema  de tener 10^-12 como pivot, por lo que no sufrimos de //ningun error con el resultado final.
+
+
+
+//Esto es lo que dice el libro, pero nosotros no tenemos errores asi que nose si va
+
+// Al tener el elemento en (1,1) es 10^-12
+// nos quedara x2 = (2 - (10^-12)^-1) / (1 - (10^-12)^-1)  aprox a 1
+//             x1 = (1-x2)*(10^-12)^-1   aprox a 0
+
+// Al calcular 2- (10^-12)^-1  sera calculado como -(10^-12)^-1 . El denominador 1- (10^-12)^-1 tambien sera computado como 
+// -(10^-12)^-1  . Por lo tanto x2 = 1 y x1 sera computado como 0. y  nos quedara con error
+ 
+ 
+ // El caso de la inversa ni idea, da distinto porque la matriz es dinstinta, osea el vector sol deberia ser distinto...
+ 
+ 
+
 disp("b)");
 A=[4 5 -6;2 0 -7; -5 -8 0];
 b=[-28; 29; -64];
 sol=[5200/47; -2874/47; 1291/47];
+disp(Solve(A, b, GaussSinPivoteo) - sol, "Gauss sin pivoteo:");
 test(A, b, sol);
+
+// Gauss sin pivoteo:   
+ 
+// 10^(-13) *
+ 
+//  - 0.1421085  
+//    0.0710543  
+ // - 0.0355271  
+
 // Gauss con pivoteo cualquiera:   
 // 10^(-13) *
 //    - 0.1421085  
@@ -206,14 +240,21 @@ test(A, b, sol);
 // Gauss con criterio de eleccion de pivote:   
 // 10^(-13) *
 //    - 0.1421085  
-//    0.0710543  
+//     0.0710543  
 //    - 0.0355271  
 
 // Usando matriz inversa:   
 // 10^(-13) *
 //    0.2842171  
-//    - 0.1421085  
+//  - 0.1421085  
 //    0.1065814  
+
+//Todos los algortmos obtienen el mismo error, es decir que en este caso realizar un pivoteo nos provocaria una deficiencia al tener que modificar la matriz sin obtener mejores resultados
+
+// Vemos que en el error obtenido en (1,1) los algoritmos utilizando la matriz A es de  - 0.1421085, mientras que utilizando inv(A) tenemos un error 0.2842171 ( -2 veces el error respecto al otro)
+// Vemos que en el error obtenido en (1,2) los algoritmos utilizando la matriz A es de    0.0710543 , mientras que utilizando inv(A) tenemos un error - 0.1421085 ( -2 veces el error respecto al otro)
+// Vemos que en el error obtenido en (1,3) los algoritmos utilizando la matriz A es de   - 0.0355271 , mientras que utilizando inv(A) tenemos un error 0.1065814 ( La suma de estos errores nos da 0.0710543 , el error de (1,2) sin utlizar inv (A) )
+
 
 
 disp("c)");
@@ -221,6 +262,11 @@ A=[1 2 -1 0 0 3 1; 1 2 2 1 -4 1 0; 0 1 -1 3 -3 0 0; 0 1 -1 2 1 1 0; 0 0 1 -2 1 0
 b=[-2; -2; 2; 5; -7; -8; 2];
 sol=[1; -1; 0; 2; 1; 1; -4];
 test(A, b, sol);
+
+
+// No podemos realizar el algoritmo sin pivoteo por quedarnos 0 como pivoteos
+
+
 // Gauss con pivoteo cualquiera:   
 // 10^(-14) *
 //    - 0.3552714  
@@ -249,7 +295,3 @@ test(A, b, sol);
 //    0.         
 //    0.1110223  
 //    - 0.0888178 
-
-
-
-
