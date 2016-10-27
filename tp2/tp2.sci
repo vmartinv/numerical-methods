@@ -11,10 +11,10 @@ funcprot(0);
 disp("=============Ejercicio 1=============");
 disp("Se implementa la funcion GaussSinPivoteo: Se convierte Ax=b en Ux=c, con U triangular superior.");
 function [U,c]=GaussSinPivoteo(A,b)
-  eps = 1e-10;
+  eps = %eps;
   n = length(b);
   for fila=1:n    
-    if abs(A(fila,fila))<eps then printf("Error: se necesita hacer pivoteo"); abort; end
+    if abs(A(fila,fila))<eps then error("Se necesita hacer pivoteo"); end
     // Eliminacion
     for i=fila+1:n
       z = A(i,fila) / A(fila,fila);
@@ -41,9 +41,9 @@ disp(c, "c = ");
 
 /////////////////////////////////////////////////////////////////
 disp("=============Ejercicio 2=============");
-disp("Se implementa la funcion GaussPivoteo: Se convierte Ax=b en Ux=c, con U triangular superior.");
-function [U,c]=GaussPivoteo(A,b)
-  eps = 1e-10;
+disp("Se implementa la funcion GaussConPivoteo: Se convierte Ax=b en Ux=c, con U triangular superior.");
+function [U,c]=GaussConPivoteo(A,b,eps)
+  if ~exists("eps","local") then eps = %eps; end
   n = length(b);
   permut(n) = 0;
   for i=1:n permut(i) = i; end
@@ -55,7 +55,7 @@ function [U,c]=GaussPivoteo(A,b)
       for i=fila+1:n
         if abs(A(i, fila))>eps then nfila = i; break; end
       end
-      if nfila == -1 then printf("Error: matriz singular!"); abort; end
+      if nfila == -1 then error("Matriz singular!"); end
       if nfila <> fila then
         for j=fila:n
           vaux = A(nfila,j);
@@ -90,7 +90,7 @@ A=[0 1; 1 1];
 b=[1; 2];
 disp(A, "A = ");
 disp(b, "b = ");
-[U, c] = GaussPivoteo(A, b);
+[U, c] = GaussConPivoteo(A, b);
 disp(U, "U = ");
 disp(c, "c = ");
 
@@ -99,15 +99,15 @@ A=[0 1 0; 1 0 0; 0 0 1];
 b=[1; 2; 3];
 disp(A, "A = ");
 disp(b, "b = ");
-[U, c] = GaussPivoteo(A, b);
+[U, c] = GaussConPivoteo(A, b);
 disp(U, "U = ");
 disp(c, "c = ");
 
 /////////////////////////////////////////////////////////////////
 disp("=============Ejercicio 3=============");
-disp("Se implementa la funcion Gauss: Se convierte Ax=b en Ux=c, con U triangular superior.");
-function [U,c]=Gauss(A,b)
-  eps = 1e-10;
+disp("Se implementa la funcion GaussConPivoteoSelectivo: Se convierte Ax=b en Ux=c, con U triangular superior.");
+function [U,c]=GaussConPivoteoSelectivo(A,b,eps)
+  if ~exists("eps","local") then eps = %eps; end
   n = length(b);
   permut(n) = 0;
   for i=1:n permut(i) = i; end
@@ -124,7 +124,7 @@ function [U,c]=Gauss(A,b)
       val = abs(A(i,fila)/s);
       if nval == -1 | val > nval then nfila = i;  nval = val; end
     end
-    if abs(A(nfila,fila))<eps then printf("Error: matriz singular!"); abort; end
+    if abs(A(nfila,fila))<eps then error("Matriz singular!"); end
     if nfila <> fila then
       for j=fila:n
         vaux = A(nfila,j);
@@ -156,7 +156,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////
 disp("=============Ejercicio 4=============");
-disp("Se muestran a continuacion los errores cometidos respecto a la solución exacta.");
+disp("Se muestran a continuacion los errores cometidos respecto a la solución exacta y su explicación.");
 function x=Solve(A, b, gauss)
   [U, c] = gauss(A, b);
   n = length(c);
@@ -171,10 +171,15 @@ function x=Solve(A, b, gauss)
 endfunction
 
 function test(A, b, sol)
-  //disp(Solve(A, b, GaussSinPivoteo) - sol, "Gauss sin pivoteo:");
-  disp(Solve(A, b, GaussPivoteo) - sol, "Gauss con pivoteo cualquiera:");
-  disp(Solve(A, b, Gauss) - sol, "Gauss con criterio de eleccion de pivote:");
-  disp(inv(A)*b - sol, "Usando matriz inversa:");
+  try
+    disp(abs(Solve(A, b, GaussSinPivoteo) - sol), "Usando GaussSinPivoteo:");
+  catch
+    disp("No es posible realizar el algoritmo sin pivoteo por quedarnos con el 0 como pivote.");
+  end
+  disp(abs(Solve(A, b, GaussConPivoteo) - sol), "Usando GaussConPivoteo:");
+  disp(abs(Solve(A, b, GaussConPivoteoSelectivo) - sol), "Usando GaussConPivoteoSelectivo:");
+  disp(abs(inv(A)*b - sol), "Usando matriz inversa:");
+  disp(norm(A)*norm(inv(A)), "Numero de condicion de A:");
 endfunction
  
 disp("a)");
@@ -182,8 +187,12 @@ A=[10^-12 1;1 1];
 b=[1; 2];
 sol=[1/(1 - 10^-12); (1 - 2*10^-12)/(1 - 10^-12)];
 test(A, b, sol);
+// Gauss sin pivoteo:   
+// 0.0000221  
+// 0. 
+
 // Gauss con pivoteo cualquiera:   
-// 0.  
+// 0.0000221
 // 0.  
 
 // Gauss con criterio de eleccion de pivote:   
@@ -194,67 +203,49 @@ test(A, b, sol);
 // 0.         
 // 1.110D-16  
 
+// Numero de condicion de A:   
+// 2.618034  
 
+disp("Tenemos un error considerable en el Gauss sin pivoteo, prodecemos a analizarlo. Resolviendo el sistema tenemos:");
+disp("x2 = (2 - (10^-12)^-1) / (1 - (10^-12)^-1), x1 = (1-x2)*(10^-12)^-1)");
+disp("El termino 2-(10^-12)^-1 sera calculado como -(10^-12)^-1, pues al hacer el shift de las mantisas los bits de 2 se eliminan. Analogamente el denominador 1-(10^-12)^-1 tambien sera computado como -(10^-12)^-1. Por lo tanto x2 = 1 y x1 sera computado como 0, lo cual introduce error en la solucion.");
+disp("Este error no se presenta cuando el pivote se elige cuidadosamente, pues esta elección reduce los errores de las operaciones. También observamos que el error usando la matriz inversa no es grande debido al bajo numero de condición que presenta A.");
 
-// El problema de realizar el algoritmo de Gauss sin pivoteo es que el elemento en (1,1) es 10^-12 < epsilon de la maquina, por lo que
-// tendremos que intercambiar filas para  lograr que el algoritmo funcione.
-//En los casos con pivoteo, al intercambiar las filas no sufrimos del problema  de tener 10^-12 como pivot, por lo que no sufrimos de //ningun error con el resultado final.
-
-
-
-//Esto es lo que dice el libro, pero nosotros no tenemos errores asi que nose si va
-
-// Al tener el elemento en (1,1) es 10^-12
-// nos quedara x2 = (2 - (10^-12)^-1) / (1 - (10^-12)^-1)  aprox a 1
-//             x1 = (1-x2)*(10^-12)^-1   aprox a 0
-
-// Al calcular 2- (10^-12)^-1  sera calculado como -(10^-12)^-1 . El denominador 1- (10^-12)^-1 tambien sera computado como 
-// -(10^-12)^-1  . Por lo tanto x2 = 1 y x1 sera computado como 0. y  nos quedara con error
- 
- 
- // El caso de la inversa ni idea, da distinto porque la matriz es dinstinta, osea el vector sol deberia ser distinto...
- 
- 
 
 disp("b)");
 A=[4 5 -6;2 0 -7; -5 -8 0];
 b=[-28; 29; -64];
 sol=[5200/47; -2874/47; 1291/47];
-disp(Solve(A, b, GaussSinPivoteo) - sol, "Gauss sin pivoteo:");
 test(A, b, sol);
-
 // Gauss sin pivoteo:   
- 
 // 10^(-13) *
- 
-//  - 0.1421085  
+//    0.1421085  
 //    0.0710543  
- // - 0.0355271  
+//    0.0355271  
 
 // Gauss con pivoteo cualquiera:   
 // 10^(-13) *
-//    - 0.1421085  
+//    0.1421085  
 //    0.0710543  
-//    - 0.0355271  
+//    0.0355271  
 
 // Gauss con criterio de eleccion de pivote:   
 // 10^(-13) *
-//    - 0.1421085  
-//     0.0710543  
-//    - 0.0355271  
+//    0.1421085  
+//    0.0710543  
+//    0.0355271  
 
 // Usando matriz inversa:   
 // 10^(-13) *
 //    0.2842171  
-//  - 0.1421085  
+//    0.1421085  
 //    0.1065814  
 
-//Todos los algortmos obtienen el mismo error, es decir que en este caso realizar un pivoteo nos provocaria una deficiencia al tener que modificar la matriz sin obtener mejores resultados
+// Numero de condicion de A:   
+// 26.094814
 
-// Vemos que en el error obtenido en (1,1) los algoritmos utilizando la matriz A es de  - 0.1421085, mientras que utilizando inv(A) tenemos un error 0.2842171 ( -2 veces el error respecto al otro)
-// Vemos que en el error obtenido en (1,2) los algoritmos utilizando la matriz A es de    0.0710543 , mientras que utilizando inv(A) tenemos un error - 0.1421085 ( -2 veces el error respecto al otro)
-// Vemos que en el error obtenido en (1,3) los algoritmos utilizando la matriz A es de   - 0.0355271 , mientras que utilizando inv(A) tenemos un error 0.1065814 ( La suma de estos errores nos da 0.0710543 , el error de (1,2) sin utlizar inv (A) )
-
+disp("Todos los algoritmos producen el mismo error, es decir que en este caso realizar un pivoteo solo empeora el tiempo de ejecución sin obtener mejores resultados.");
+disp("Tenemos un problema al usar la matrix inversa, donde los errores casi se duplican. Veamos que el numero de condicion para la matriz A es alto, por lo que el error obtenido es esperable.");
 
 
 disp("c)");
@@ -262,36 +253,38 @@ A=[1 2 -1 0 0 3 1; 1 2 2 1 -4 1 0; 0 1 -1 3 -3 0 0; 0 1 -1 2 1 1 0; 0 0 1 -2 1 0
 b=[-2; -2; 2; 5; -7; -8; 2];
 sol=[1; -1; 0; 2; 1; 1; -4];
 test(A, b, sol);
-
-
-// No podemos realizar el algoritmo sin pivoteo por quedarnos 0 como pivoteos
-
+//  No es posible realizar el algoritmo sin pivoteo por quedarnos con el 0 como pivote.
 
 // Gauss con pivoteo cualquiera:   
 // 10^(-14) *
-//    - 0.3552714  
+//    0.3552714  
 //    0.1776357  
 //    0.         
-//    - 0.0888178  
-//    - 0.0222045  
+//    0.0888178  
+//    0.0222045  
 //    0.         
 //    0.         
 
 // Gauss con criterio de eleccion de pivote:   
 // 0.         
 // 1.221D-15  
-// - 2.961D-16  
-// - 4.441D-16  
+// 2.961D-16  
+// 4.441D-16  
 // 2.220D-16  
-// - 5.551D-16  
-// - 8.882D-16  
+// 5.551D-16  
+// 8.882D-16  
 
 // Usando matriz inversa:   
 // 10^(-14) *
-//    - 0.1776357  
+//    0.1776357  
 //    0.0888178  
-//    - 0.0777156  
-//    - 0.1110223  
+//    0.0777156  
+//    0.1110223  
 //    0.         
 //    0.1110223  
-//    - 0.0888178 
+//    0.0888178
+
+// Numero de condicion de A:   
+// 18.685037
+
+disp("Aquí también se aprecia error en el calculo de la inversa debido a su valor de condición. A su vez tenemos un mejor resultado cuando utilizamos Gauss. Podría parecer que GaussConPivoteoSelectivo es peor pero al analizar la norma del error, notamos que utilizando GaussConPivoteoSelectivo la norma del error se reduce a más la mitad con respecto a GaussConPivoteo. Esto se debe a que el criterio reduce la propagación del error en el algoritmo.");
