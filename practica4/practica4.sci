@@ -80,13 +80,13 @@ disp("Parecido al TP2.");
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 6.53 (4.3)==");
 function x=Solve(A, b)
-  U, _, L, P = Gauss(A,b);
+  _, P, L, U = Gauss(A,b);
   z = SustitucionProgresiva(L, P*b);
   x = SustitucionRegresiva(U, z);
 endfunction
 disp("P^-1 = P^T, PA=LU => A^T = U^T*L^T*P. y^T*A=c^T => A^T*y=c => U^T*L^T*P*y=c, el cual es fácilmente resolvible.")
 function y=Solve2(A, c)
-  U, _, L, P = Gauss(A,b);
+  _, P, L, U = Gauss(A,b);
   z = SustitucionProgresiva(U', c);
   u = SustitucionRegresiva(L', z);
   y = P'*u;
@@ -130,7 +130,7 @@ disp("Es el metodo de Gauss-Seidel tomando en cuenta que a_ii=0. Por Teorema sab
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 8.7 (4.6)==");
-disp("??");
+disp("?? TODO");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 8.22 (4.6)==");
@@ -151,11 +151,11 @@ disp(norm(A*x-b), "error = ");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 8.35 (4.6)==");
-disp("??");
+disp("?? TODO");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 9.a==");
-disp("--1er sistema:");
+disp("--> 1er sistema:");
 disp("Se reorganizan las filas.");
 A=[1 -1 -1; 1 -1 2; 0 2 4];
 b=[0.375; 0; 0];
@@ -165,7 +165,7 @@ Q=D;
 disp(norm(I-inv(Q)*A), "Con Jacobi tenemos ||I-Q^-1 A|| = ");
 disp("No puedo asegurarlo pues la matriz no es diagonalmente dominante, ni ||I-Q^-1 A||<1.");
 
-disp("--2do sistema:");
+disp("--> 2do sistema:");
 disp("Supongo que la primera ecuación es x_1 - x_2 = 0");
 A=[1 -2 0; 0 -1 1.1; -1 2 -1];
 b=[0; 1; 0];
@@ -177,28 +177,32 @@ disp("No puedo asegurarlo pues la matriz no es diagonalmente dominante, ni ||I-Q
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 9.b==");
-disp("Lo mismo que 9.a? Arreglar");
 A=[1 -1 -1; 1 -1 2; 0 2 4];
 b=[0.375; 0; 0];
 I=eye(3, 3);
 [D, C_L, C_U] = Decompose(A);
 Q=-C_L;
 disp("Con Gauss-Saidel tenemos Q=-C_L no es invertible.");
-disp("No puedo asegurarlo pues la matriz no es diagonalmente dominante, ni ||I-Q^-1 A||<1.");
+disp("No puedo asegurarlo pues la matriz no es diagonalmente dominante, ni ||I-Q^-1 A||<1, ni simétrica.");
 
-disp("--2do sistema:");
+disp("--> 2do sistema:");
 disp("Supongo que la primera ecuación es x_1 - x_2 = 0");
-A=[1 -2 0; 0 -1 1.1; -1 2 -1];
+A=[
+  1 -1 0;
+  -1 2 -1;
+  0 -1 1.1;
+];
 b=[0; 1; 0];
 I=eye(3, 3);
 [D, C_L, C_U] = Decompose(A);
 Q=-C_L;
-disp("Con Gauss-Saidel tenemos Q=-C_L no es invertible.");
-disp("No puedo asegurarlo pues la matriz no es diagonalmente dominante, ni ||I-Q^-1 A||<1.");
+//disp(chol(A)); //Para chequear si es definida positiva
+disp("Con Gauss-Saidel tenemos que la matriz es simétrica y definida positiva, por lo que tenemos asegurada la convergencia.");
+disp("TODO: Ver como probar def pos, esta en la teoría: si es def pos entonces converge?");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 9.c==");
-disp("--1er sistema:");
+disp("--> 1er sistema:");
 disp("Se reorganizan las filas.");
 A=[1 -1 -1; 1 -1 2; 0 2 4];
 b=[0.375; 0; 0];
@@ -207,13 +211,17 @@ disp(norm(A*x-b), "error con Jacobi = ");
 x=GaussSeidel(A, b, 30);
 disp(norm(A*x-b), "error con GaussSeidel = ");
 
-disp("--2do sistema:");
-A=[1 -2 0; 0 -1 1.1; -1 2 -1];
+disp("--> 2do sistema:");
+A=[
+  1 -1 0;
+  -1 2 -1;
+  0 -1 1.1;
+];
 b=[0; 1; 0];
 // disp(inv(A)*b); //Para espiar la solucion jeje
-x=Jacobi(A, b, 50);
+x=Jacobi(A, b, 100);
 disp(norm(A*x-b), "error con Jacobi = ");
-x=GaussSeidel(A, b, 50);
+x=GaussSeidel(A, b, 100);
 disp(norm(A*x-b), "error con GaussSeidel = ");
 disp("El método no converge! (preguntar)");
 
@@ -255,7 +263,7 @@ disp(norm(A*x-b), "error con GaussSeidel = ");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 12.1 (4.7)==");
-disp("Trabajar y trabajar la expresión (gradiente(q))_i hasta llegar a (2(Ax-B))_i.");
+disp("Trabajar y trabajar la expresión (gradiente(q))_i hasta llegar a (2(Ax-b))_i.");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 12.3 (4.7)==");
@@ -295,25 +303,34 @@ disp(spec(A), "(c)");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 15==");
-disp("--Ej 10");
+disp("--> Ej 10");
 disp("TODO");
 
-disp("--Ej 11");
+disp("--> Ej 11");
+disp("TODO Aplicar a la G del 11!");
 A=[10 1 2 3 4;
     1 9 -1 2 -3;
     2 -1 7 3 -5;
     3 2 3 12 -1;
     4 -3 -5 -1 15];
 b = [12; -27; 14; -17; 12];
-[x, r] = MetodoPotencia(A, b, 500);
+[x, r] = MetodoPotencia(A, 500);
 disp(x, "x =");
 disp(r, "r =");
-disp(norm(A*x-r*x), "||Ax-rx|| (error) = ");
+disp(abs(max(spec(A))-r), "error = ");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 16==");
-disp("TODO");
-
+disp("El método de la potencia inversa sirve para encontrar el autovalor r de A más pequeño. Utiliza el hecho de que 1/r es autovalor de A^-1 y es el mayor. Por lo que se podría sacar la inversa A^-1 y hacer el método de la potencia común sobre él, sin embargo esto trae muchos problemas de redondeo. Es mucho mejor utilizar Gauss para resolver Ax^(k+1)=x^(k). Y se puede aprovechar que el proceso de eliminación sólo debe ser realizado una vez.");
+A=[1 0 0;
+  -1 0 1;
+  -1 -1 2];
+[x, r] = MetodoPotenciaInversa(A, 500);
+disp(x, "x =");
+disp(r, "r =");
+disp(norm(A*x-r*x), "error = ");
+//disp(abs(min(spec(A))-r), "error = ");
+disp("TODO: Ver porque spec(A) tira autovalores complejos.");
 
 
 

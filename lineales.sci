@@ -1,7 +1,11 @@
 // Algoritmo de Gauss modificado con pivoteo parcial.
 // Obtiene también la descomposición PA=LU ;) ;) (con L(i,i)=1)
-function [U, x, L, P]=Gauss(A,b)
-  n = length(b);
+function [x, P, L, U]=Gauss(A,b)
+  n = size(A, 'r');
+  if ~exists("b","local") then
+    for i=1:n b(i)=0; end
+  end
+  L=zeros(n,n);
   permut(n) = 0;
   for i=1:n permut(i) = i; end
   
@@ -55,6 +59,12 @@ function [U, x, L, P]=Gauss(A,b)
   for i=1:n L(i,i)=1; end
   U=A;
   x=b;
+endfunction
+
+//Resuelve Ax=b, dado PA=LU
+function x=SolvePALU(b, P, L, U)
+  z = SustitucionProgresiva(L, P*x);
+  x = SustitucionRegresiva(U, z);
 endfunction
 
 //Obtiene la factorización de Doolittle (A=LU), L(i, i)=1
@@ -175,6 +185,7 @@ endfunction
 
 //Resuelve Ax=b usando Q=D, G=D^-1(C_L+C_U)
 //Dx^(k) = (C_L + C_U) x^(k-1) + b
+//Converge si es diagonalmente dominante o ||I-Q^-1 A||<1
 function x=Jacobi(A, b, it, x)
   n = length(b);
   if ~exists("x","local") then
@@ -198,6 +209,7 @@ endfunction
 
 //Resuelve Ax=b usando Q=-C_L, G=(D-C_L)^-1 C_U
 //(D-C_L)x^(k) = C_U x^(k-1) + b
+//Converge si es diagonalmente dominante o ||I-Q^-1 A||<1 o simétrica definida positiva
 function x=GaussSeidel(A, b, it, x)
   n = length(b);
   if ~exists("x","local") then
@@ -216,6 +228,7 @@ function x=GaussSeidel(A, b, it, x)
   end
 endfunction
 
+//Resuelve Ax=b, minimizando q(x)=<x,Ax>-2<x,b>, moviendose en direccion opuesta a su gradiente (2(Ax-b))
 function x=DescensoRapido(A, b, it, x)
   n = length(b);
   if ~exists("x","local") then
@@ -228,15 +241,32 @@ function x=DescensoRapido(A, b, it, x)
  end
 endfunction
 
-function [x, r]=MetodoPotencia(A, b, it, x)
-  n = length(b);
+//Encuentra el autovalor de mayor valor absoluto (r), y su autovector asociado (x).
+function [x, r]=MetodoPotencia(A, it, x)
+  n = size(A, 'r');
   if ~exists("x","local") then
     for i=1:n x(i)=1; end
   end
   for k=1:it
     y = A*x;
-    r = max(y)/max(x);
+    r = y(1)/x(1);
     x = y/norm(y);
  end
 endfunction
+
+//Encuentra el autovalor de menor valor absoluto (r), y su autovector asociado (x).
+//Funciona aplicando el método de la potencia sobre A^-1.
+function [x, r]=MetodoPotenciaInversa(A, it, x)
+  n = size(A, 'r');
+  if ~exists("x","local") then
+    for i=1:n x(i)=1; end
+  end
+  [_, P, L, U]=Gauss(A);
+  for k=1:it
+    y = SolvePALU(x, P, L, U);
+    r = y(1)/x(1);
+    x = y/norm(y);
+ end
+endfunction
+
 
