@@ -1,5 +1,5 @@
 // Algoritmo de Gauss modificado con pivoteo parcial.
-// Obtiene también la descomposición PLU ;) ;) (con L(i,i)=1)
+// Obtiene también la descomposición PA=LU ;) ;) (con L(i,i)=1)
 function [U, x, L, P]=Gauss(A,b)
   n = length(b);
   permut(n) = 0;
@@ -57,7 +57,7 @@ function [U, x, L, P]=Gauss(A,b)
   x=b;
 endfunction
 
-//Obtiene la factorización de Doolittle (A=LU), l_ii=1
+//Obtiene la factorización de Doolittle (A=LU), L(i, i)=1
 function [L, U]=Doolittle(A)
   n = size(A, 'r');
   for k=1:n
@@ -139,9 +139,22 @@ function x=Tridiagonal(A, b)
   end
 endfunction
 
+//Descompone A = D - C_L - C_U con D diagonal, C_L negativo de la parte triangular inferior y C_U negativo de la parte triangular superior,
+function [D, C_L, C_U]=Decompose(A)
+  n = size(A, 'r');
+  C_L = 0*A;
+  for i=1:n
+    D(i, i) = A(i, i);
+    for j=1:i-1
+        C_L(i, j) = -A(i, j);
+    end
+  end
+  C_U = -(A - D + C_L);
+endfunction
+
 //Resuelve Ax=b usando Q=I, G=I-A
 //x^(k) = (I - A) x^(k-1) + b
-function x=Richardson(A, b, it, x) //No testeada
+function x=Richardson(A, b, it, x) //No testeado!
   n = length(b);
   if ~exists("x","local") then
     for i=1:n x(i)=0; end
@@ -160,7 +173,7 @@ function x=Richardson(A, b, it, x) //No testeada
   end
 endfunction
 
-//Resuelve Ax=b usando Q=diagonal de A, G=D^-1(C_L+C_U)
+//Resuelve Ax=b usando Q=D, G=D^-1(C_L+C_U)
 //Dx^(k) = (C_L + C_U) x^(k-1) + b
 function x=Jacobi(A, b, it, x)
   n = length(b);
@@ -183,7 +196,7 @@ function x=Jacobi(A, b, it, x)
   end
 endfunction
 
-//Resuelve Ax=b usando Q=parte triangular inferior de A, G=(D-C_L)^-1 C_U
+//Resuelve Ax=b usando Q=-C_L, G=(D-C_L)^-1 C_U
 //(D-C_L)x^(k) = C_U x^(k-1) + b
 function x=GaussSeidel(A, b, it, x)
   n = length(b);
@@ -201,5 +214,29 @@ function x=GaussSeidel(A, b, it, x)
       x(i) = (b(i) - sum) / A(i, i);
     end
   end
+endfunction
+
+function x=DescensoRapido(A, b, it, x)
+  n = length(b);
+  if ~exists("x","local") then
+    for i=1:n x(i)=0; end
+  end
+  for k=1:it
+    v = b - A*x;
+    t = (v .* v) / (v .* (A*v));
+    x = x + t*v;
+ end
+endfunction
+
+function [x, r]=MetodoPotencia(A, b, it, x)
+  n = length(b);
+  if ~exists("x","local") then
+    for i=1:n x(i)=1; end
+  end
+  for k=1:it
+    y = A*x;
+    r = max(y)/max(x);
+    x = y/norm(y);
+ end
 endfunction
 
