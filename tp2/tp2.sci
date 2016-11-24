@@ -86,11 +86,11 @@ function [U,c]=GaussConPivoteo(A,b,eps)
 endfunction
 
 disp("(+) Ejemplo del Kincaid, pagina 143:");
-A=[0 1; 1 1];
+A=[10^-12 1; 1 1];
 b=[1; 2];
 disp(A, "A = ");
 disp(b, "b = ");
-[U, c] = GaussConPivoteo(A, b);
+[U, c] = GaussConPivoteo(A, b, 10^-10);
 disp(U, "U = ");
 disp(c, "c = ");
 
@@ -287,4 +287,4 @@ test(A, b, sol);
 // Numero de condicion de A:   
 // 18.685037
 
-disp("Aquí también se aprecia error en el calculo de la inversa debido a su valor de condición. A su vez tenemos un mejor resultado cuando utilizamos Gauss. Podría parecer que GaussConPivoteoSelectivo es peor pero al analizar la norma del error, notamos que utilizando GaussConPivoteoSelectivo la norma del error se reduce a más la mitad con respecto a GaussConPivoteo. Esto se debe a que el criterio reduce la propagación del error en el algoritmo.");
+disp("Aquí también se aprecia error en el calculo de la inversa debido a su valor de condición. A su vez tenemos un mejor resultado cuando utilizamos Gauss. Podría parecer que GaussConPivoteoSelectivo es peor pero al analizar la norma del error, notamos que utilizando GaussConPivoteoSelectivo la norma del error se reduce a más de la mitad con respecto a GaussConPivoteo. Esto se debe a que el criterio reduce la propagación del error en el algoritmo.");
