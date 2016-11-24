@@ -207,9 +207,9 @@ function x=Jacobi(A, b, it, x)
   end
 endfunction
 
-//Resuelve Ax=b usando Q=-C_L, G=(D-C_L)^-1 C_U
+//Resuelve Ax=b usando Q=D-C_L, G=(D-C_L)^-1 C_U
 //(D-C_L)x^(k) = C_U x^(k-1) + b
-//Converge si es diagonalmente dominante o ||I-Q^-1 A||<1 o simétrica definida positiva
+//Converge si es diagonalmente dominante o ||I-Q^-1 A|| < 1
 function x=GaussSeidel(A, b, it, x)
   n = length(b);
   if ~exists("x","local") then
@@ -259,12 +259,12 @@ endfunction
 function [x, r]=MetodoPotenciaInversa(A, it, x)
   n = size(A, 'r');
   if ~exists("x","local") then
-    for i=1:n x(i)=1; end
+    for i=1:n x(i)=2; end
   end
   [_, P, L, U]=Gauss(A);
   for k=1:it
     y = SolvePALU(x, P, L, U);
-    r = y(1)/x(1);
+    r = x(1)/y(1);
     x = y/norm(y);
  end
 endfunction

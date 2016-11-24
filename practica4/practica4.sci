@@ -110,7 +110,7 @@ disp("Trivial.");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 7.21 (4.4)==");
-disp("Sabemos que ||A||=sup{||Ax||/||x||, x!=0}. ||A||=8. Sea x un vector cualquiera. 8=||A||>=||Ax||/||x|| => ||Ax||<=8||x||<=8. Vemos que la igualdad se cumple para x=[1;1;0] (||Ax||=8). ");
+disp("Sabemos que ||A||=sup{||Ax||/||x||, x!=0}. ||A||=10. Sea x un vector cualquiera. 810=||A||>=||Ax||/||x|| => ||Ax||<=10||x||<=10. Vemos que la igualdad se cumple para x=[1;1;0] (||Ax||=10). ");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 7.40 (4.4)==");
@@ -151,7 +151,7 @@ disp(norm(A*x-b), "error = ");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 8.35 (4.6)==");
-disp("?? TODO");
+disp("Probar que (1-d)||x^(k)-x||<=d||x^(k) - x^(k-1)||, 1ero aplicar distributiva, usar el ''truquito'' -||A|| ||B||<= -||AB|| y la desigualdad triangular de la norma.");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 9.a==");
@@ -182,8 +182,8 @@ b=[0.375; 0; 0];
 I=eye(3, 3);
 [D, C_L, C_U] = Decompose(A);
 Q=-C_L;
-disp("Con Gauss-Saidel tenemos Q=-C_L no es invertible.");
-disp("No puedo asegurarlo pues la matriz no es diagonalmente dominante, ni ||I-Q^-1 A||<1, ni simétrica.");
+disp("Con Gauss-Seidel tenemos Q=D-C_L no es invertible.");
+disp("No puedo asegurarlo pues la matriz no es diagonalmente dominante, ni ||I-Q^-1 A||<1.");
 
 disp("--> 2do sistema:");
 disp("Supongo que la primera ecuación es x_1 - x_2 = 0");
@@ -195,10 +195,9 @@ A=[
 b=[0; 1; 0];
 I=eye(3, 3);
 [D, C_L, C_U] = Decompose(A);
-Q=-C_L;
-//disp(chol(A)); //Para chequear si es definida positiva
-disp("Con Gauss-Saidel tenemos que la matriz es simétrica y definida positiva, por lo que tenemos asegurada la convergencia.");
-disp("TODO: Ver como probar def pos, esta en la teoría: si es def pos entonces converge?");
+Q=D-C_L;
+disp(norm(I-inv(Q)*A), "Con Gauss-Seidel tenemos ||I-Q^-1 A|| = ");
+disp("No puedo asegurarlo pues la matriz no es diagonalmente dominante, ni ||I-Q^-1 A||<1.");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 9.c==");
@@ -227,7 +226,7 @@ disp("El método no converge! (preguntar)");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 10==");
-disp("Por el método de Gauss-Saidel tenemos que G=(D-C_L)^-1 C_U. Como ejemplo veamos cuando n=6.");
+disp("Por el método de Gauss-Seidel tenemos que G=(D-C_L)^-1 C_U. Como ejemplo veamos cuando n=6.");
 n=6;
 A = zeros(n, n);
 for i=1:n
@@ -317,7 +316,8 @@ b = [12; -27; 14; -17; 12];
 [x, r] = MetodoPotencia(A, 500);
 disp(x, "x =");
 disp(r, "r =");
-disp(abs(max(spec(A))-r), "error = ");
+disp(norm(A*x-r*x), "error1 = ");
+disp(abs(max(abs(spec(A)))-r), "error2 = ");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 16==");
@@ -325,12 +325,16 @@ disp("El método de la potencia inversa sirve para encontrar el autovalor r de A
 A=[1 0 0;
   -1 0 1;
   -1 -1 2];
+A=[1 0 -0.5;
+  -1 0 1;
+  -1 -1 2];
+  
+disp(spec(A), "Autovalores = ");
 [x, r] = MetodoPotenciaInversa(A, 500);
-disp(x, "x =");
 disp(r, "r =");
-disp(norm(A*x-r*x), "error = ");
-//disp(abs(min(spec(A))-r), "error = ");
-disp("TODO: Ver porque spec(A) tira autovalores complejos.");
+disp(x, "x =");
+disp(norm(A*x-r*x), "error1 = ");
+disp(abs(min(abs(spec(A)))-r), "error2 = ");
 
 
 
