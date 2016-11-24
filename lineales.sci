@@ -228,6 +228,10 @@ function x=GaussSeidel(A, b, it, x)
   end
 endfunction
 
+function C=dot(A, B)
+  C=A'*B;
+endfunction
+
 //Resuelve Ax=b, minimizando q(x)=<x,Ax>-2<x,b>, moviendose en direccion opuesta a su gradiente (2(Ax-b))
 function x=DescensoRapido(A, b, it, x)
   n = length(b);
@@ -236,7 +240,9 @@ function x=DescensoRapido(A, b, it, x)
   end
   for k=1:it
     v = b - A*x;
-    t = (v .* v) / (v .* (A*v));
+    div = dot(v, A*v);
+    if abs(div)<%eps then break; end
+    t = dot(v, v) / div;
     x = x + t*v;
  end
 endfunction
@@ -249,7 +255,7 @@ function [x, r]=MetodoPotencia(A, it, x)
   end
   for k=1:it
     y = A*x;
-    r = y(1)/x(1);
+    r = max(y)/max(x); //Tambien se puede probar con r = y(1)/x(1)
     x = y/norm(y);
  end
 endfunction
@@ -259,12 +265,12 @@ endfunction
 function [x, r]=MetodoPotenciaInversa(A, it, x)
   n = size(A, 'r');
   if ~exists("x","local") then
-    for i=1:n x(i)=2; end
+    for i=1:n x(i)=1; end
   end
   [_, P, L, U]=Gauss(A);
   for k=1:it
     y = SolvePALU(x, P, L, U);
-    r = x(1)/y(1);
+    r = max(x)/max(y); //Tambien se puede probar con r = x(1)/y(1)
     x = y/norm(y);
  end
 endfunction
