@@ -61,13 +61,55 @@ function [x, P, L, U]=Gauss(A,b)
   x=b;
 endfunction
 
-//Resuelve Ax=b, dado PA=LU
+// Resuelve el sistema L*x = b,
+// siendo L triangular inferior con diagonal no nula (inversible)
+function x=SustitucionProgresiva(L,b)
+  n = length(b);
+  for i=1:n
+    x(i) = b(i);
+    for j=1:i-1
+      x(i) = x(i) - L(i,j)*x(j);
+    end
+    x(i) = x(i) / L(i,i);
+  end
+endfunction
+
+// Resuelve el sistema U*x = b,
+// siendo U triangular superior con diagonal no nula (inversible)
+function x=SustitucionRegresiva(U,b)
+  n = length(b);
+  for i=n:-1:1
+    x(i) = b(i);
+    for j=n:-1:i+1
+      x(i) = x(i) - U(i,j)*x(j);
+    end
+    x(i) = x(i) / U(i,i);
+  end
+endfunction
+
+// Resuelve Ax=b, dado PA=LU
 function x=SolvePALU(b, P, L, U)
   z = SustitucionProgresiva(L, P*x);
   x = SustitucionRegresiva(U, z);
 endfunction
 
-//Obtiene la factorización de Doolittle (A=LU), L(i, i)=1
+// Resuelve el sistema A*x = b, siendo A tridiagonal
+function x=Tridiagonal(A, b)
+  n = length(b);
+  for i=1:n d(i)=A(i, i); end
+  for i=1:n-1 a(i)=A(i+1, i); end
+  for i=1:n-1 c(i)=A(i, i+1); end
+  for i=2:n
+    d(i) = d(i) - (a(i-1) / d(i-1))*c(i-1);
+    b(i) = b(i) - (a(i-1) / d(i-1))*b(i-1);
+  end
+  x(n) = b(n)/d(n);
+  for i=n-1:-1:1
+    x(i) = (b(i) - c(i)*x(i+1)) / d(i);
+  end
+endfunction
+
+// Obtiene la factorización de Doolittle (A=LU, L(i, i)=1)
 function [L, U]=Doolittle(A)
   n = size(A, 'r');
   for k=1:n
@@ -89,7 +131,7 @@ function [L, U]=Doolittle(A)
   end
 endfunction
 
-//Obtiene la factorización de Doolittle (A=LU), U(i, i)=1
+// Obtiene la factorización de Crout (A=LU, U(i, i)=1)
 function [L, U]=Crout(A)
   n = size(A, 'r');
   for k=1:n
@@ -111,8 +153,8 @@ function [L, U]=Crout(A)
   end
 endfunction
 
-//Obtiene la descomposicion de Cholesky, si A es real, simétrica y definida positiva. (A=L L^T)
-//Esta factorizacion no necesita pivoteo por que sus elementos estan acotados por los de A.
+// Descomposicion de Cholesky, si A es real, simétrica y def. +. (A=L L^T)
+// No necesita pivoteo por que sus elementos estan acotados por los de A.
 function L=Cholesky(A)
   n = size(A, 'r');
   for k=1:n
@@ -131,47 +173,9 @@ function L=Cholesky(A)
   end
 endfunction
 
-// Resuelve el sistema U*x = b, siendo U triangular superior con diagonal no nula (inversible)
-function x=SustitucionRegresiva(U,b)
-  n = length(b);
-  for i=n:-1:1
-    x(i) = b(i);
-    for j=n:-1:i+1
-      x(i) = x(i) - U(i,j)*x(j);
-    end
-    x(i) = x(i) / U(i,i);
-  end
-endfunction
-
-// Resuelve el sistema L*x = b, siendo L triangular inferior con diagonal no nula (inversible)
-function x=SustitucionProgresiva(L,b)
-  n = length(b);
-  for i=1:n
-    x(i) = b(i);
-    for j=1:i-1
-      x(i) = x(i) - L(i,j)*x(j);
-    end
-    x(i) = x(i) / L(i,i);
-  end
-endfunction
-
-// Resuelve el sistema A*x = b, siendo A tridiagonal
-function x=Tridiagonal(A, b)
-  n = length(b);
-  for i=1:n d(i)=A(i, i); end
-  for i=1:n-1 a(i)=A(i+1, i); end
-  for i=1:n-1 c(i)=A(i, i+1); end
-  for i=2:n
-    d(i) = d(i) - (a(i-1) / d(i-1))*c(i-1);
-    b(i) = b(i) - (a(i-1) / d(i-1))*b(i-1);
-  end
-  x(n) = b(n)/d(n);
-  for i=n-1:-1:1
-    x(i) = (b(i) - c(i)*x(i+1)) / d(i);
-  end
-endfunction
-
-//Descompone A = D - C_L - C_U con D diagonal, C_L negativo de la parte triangular inferior y C_U negativo de la parte triangular superior,
+// Descompone A = D - C_L - C_U con D diagonal,
+// C_L negativo de la parte triangular inferior
+// y C_U negativo de la parte triangular superior,
 function [D, C_L, C_U]=Decompose(A)
   n = size(A, 'r');
   C_L = 0*A;
@@ -184,9 +188,8 @@ function [D, C_L, C_U]=Decompose(A)
   C_U = -(A - D + C_L);
 endfunction
 
-//Resuelve Ax=b usando Q=I, G=I-A
-//x^(k) = (I - A) x^(k-1) + b
-//Converge si es diagonalmente dominante con a_ii=1 o ||I-Q^-1 A||<1
+// Resuelve Ax=b usando Q=I, G=I-A
+// Converge si es diagonalmente dominante con a_ii=1 o ||I-Q^-1 A||<1
 function x=Richardson(A, b, it, x) //No testeado!
   n = length(b);
   if ~exists("x","local") then
@@ -206,9 +209,8 @@ function x=Richardson(A, b, it, x) //No testeado!
   end
 endfunction
 
-//Resuelve Ax=b usando Q=D, G=D^-1(C_L+C_U)
-//Dx^(k) = (C_L + C_U) x^(k-1) + b
-//Converge si es diagonalmente dominante o ||I-Q^-1 A||<1
+// Resuelve Ax=b usando Q=D, G=D^-1(C_L+C_U)
+// Converge si es diagonalmente dominante o ||I-Q^-1 A||<1
 function x=Jacobi(A, b, it, x)
   n = length(b);
   if ~exists("x","local") then
@@ -230,9 +232,8 @@ function x=Jacobi(A, b, it, x)
   end
 endfunction
 
-//Resuelve Ax=b usando Q=D-C_L, G=(D-C_L)^-1 C_U
-//(D-C_L)x^(k) = C_U x^(k-1) + b
-//Converge si es diagonalmente dominante o ||I-Q^-1 A|| < 1
+// Resuelve Ax=b usando Q=D-C_L, G=(D-C_L)^-1 C_U
+// Converge si es diagonalmente dominante o ||I-Q^-1 A|| < 1
 function x=GaussSeidel(A, b, it, x)
   n = length(b);
   if ~exists("x","local") then
@@ -255,7 +256,8 @@ function C=dot(A, B)
   C=A'*B;
 endfunction
 
-//Resuelve Ax=b, minimizando q(x)=<x,Ax>-2<x,b>, moviendose en direccion opuesta a su gradiente (2(Ax-b))
+// Resuelve Ax=b, minimizando q(x)=<x,Ax>-2<x,b>,
+// moviendose en direccion opuesta a su gradiente (2(Ax-b))
 function x=DescensoRapido(A, b, it, x)
   n = length(b);
   if ~exists("x","local") then
@@ -270,7 +272,8 @@ function x=DescensoRapido(A, b, it, x)
  end
 endfunction
 
-//Encuentra el autovalor de mayor valor absoluto (r), y su autovector asociado (x).
+// Retorna el autovalor de mayor valor absoluto (r),
+// junto con un autovector asociado (x).
 function [x, r]=MetodoPotencia(A, it, x)
   n = size(A, 'r');
   if ~exists("x","local") then
@@ -278,13 +281,14 @@ function [x, r]=MetodoPotencia(A, it, x)
   end
   for k=1:it
     y = A*x;
-    r = max(y)/max(x); //Tambien se puede probar con r = y(1)/x(1)
+    r = max(y)/max(x); // Tambien se puede probar con r = y(1)/x(1)
     x = y/norm(y);
  end
 endfunction
 
-//Encuentra el autovalor de menor valor absoluto (r), y su autovector asociado (x).
-//Funciona aplicando el método de la potencia sobre A^-1.
+// Retorna el autovalor de mayor valor absoluto (r),
+// junto con un autovector asociado (x).
+// Funciona aplicando el método de la potencia sobre A^-1.
 function [x, r]=MetodoPotenciaInversa(A, it, x)
   n = size(A, 'r');
   if ~exists("x","local") then
@@ -293,7 +297,7 @@ function [x, r]=MetodoPotenciaInversa(A, it, x)
   [_, P, L, U]=Gauss(A);
   for k=1:it
     y = SolvePALU(x, P, L, U);
-    r = max(x)/max(y); //Tambien se puede probar con r = x(1)/y(1)
+    r = max(x)/max(y); // Tambien se puede probar con r = x(1)/y(1)
     x = y/norm(y);
  end
 endfunction
