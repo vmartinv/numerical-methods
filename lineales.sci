@@ -89,6 +89,28 @@ function [L, U]=Doolittle(A)
   end
 endfunction
 
+//Obtiene la factorización de Doolittle (A=LU), U(i, i)=1
+function [L, U]=Crout(A)
+  n = size(A, 'r');
+  for k=1:n
+    U(k, k) = 1;
+    for i=k:n
+      sum = 0;
+      for s=1:k-1
+        sum = sum + L(i, s)*U(s, k);
+      end
+      L(i, k) = A(i, k) - sum
+    end
+    for j=k+1:n
+      sum = 0;
+      for s=1:k-1
+        sum = sum + L(k, s)*U(s, j);
+      end
+      U(k, j) = (A(k, j) - sum) / L(k, k);
+    end
+  end
+endfunction
+
 //Obtiene la descomposicion de Cholesky, si A es real, simétrica y definida positiva. (A=L L^T)
 //Esta factorizacion no necesita pivoteo por que sus elementos estan acotados por los de A.
 function L=Cholesky(A)
