@@ -222,7 +222,6 @@ x=Jacobi(A, b, 100);
 disp(norm(A*x-b), "error con Jacobi = ");
 x=GaussSeidel(A, b, 100);
 disp(norm(A*x-b), "error con GaussSeidel = ");
-disp("El método no converge! (preguntar)");
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 10==");
@@ -316,8 +315,35 @@ b = [12; -27; 14; -17; 12];
 [x, r] = MetodoPotencia(A, 500);
 disp(x, "x =");
 disp(r, "r =");
+
+function w=Perp(u)
+  n = length(u);
+  M1=1;
+  for i=n
+    if abs(u(i))>abs(u(M1)) then M1=i; end
+  end
+  M2=modulo(M1, n)+1;
+  for i=n
+    if i<>M1 & abs(u(i))>abs(u(M2)) then M2=i; end
+  end
+  w = zeros(n);
+  w(M1) = -u(M2);
+  w(M2) = u(M1);
+endfunction
+w=Perp(x);
+disp(dot(x, w), "<x, w> = ");
+disp(spec(A), "Autovalores = ");
+//[autovectores, autovalores] = spec(A);
+//sol=Gauss(autovectores, w);
+//disp(sol);
+//disp(autovectores);
+//w=autovectores*[1;0;0];
+[x, r] = MetodoPotencia(A, 500, w);
+disp(x, "x =");
+disp(r, "r =");
 disp(norm(A*x-r*x), "error1 = ");
 disp(abs(max(abs(spec(A)))-r), "error2 = ");
+quit;
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 16==");

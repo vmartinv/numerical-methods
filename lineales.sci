@@ -164,6 +164,7 @@ endfunction
 
 //Resuelve Ax=b usando Q=I, G=I-A
 //x^(k) = (I - A) x^(k-1) + b
+//Converge si es diagonalmente dominante con a_ii=1 o ||I-Q^-1 A||<1
 function x=Richardson(A, b, it, x) //No testeado!
   n = length(b);
   if ~exists("x","local") then
