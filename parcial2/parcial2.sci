@@ -1,5 +1,4 @@
 //Alumno: Martín Villagra
-//Legajo: V-2719/7
 funcprot(0);
 
 A=[3   2    0.5 ;

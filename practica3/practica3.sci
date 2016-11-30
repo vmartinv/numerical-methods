@@ -1,5 +1,5 @@
 funcprot(0)
-exec('../find_roots.sci',-1)
+exec('../nolineales.sci',-1)
 
 /////////////////////////////////////////////////////////////////
 disp("==Ejercicio 1.2==")
