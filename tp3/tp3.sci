@@ -1,5 +1,5 @@
 //LCC - Métodos Numéricos
-//Trabajo Practico 3
+//Trabajo Práctico 3
 //Alumno: Martin Villagra
 
 funcprot(0);
