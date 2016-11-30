@@ -129,31 +129,7 @@ disp("e^eps * (-12)^n / (n+1)! con eps entre 0 y -12");
 disp("Para valores pequeños de n, el termino (-12)^n va a ser muy grande, mientras que e^eps / (n+1)! va a ser relativamente pequeño.");
 
 
-disp("Aproximaremos e^-12 utilizando e=lim (1+1/n)^n cuando n->inf");
-disp("Es decir dado un n, estimamos e^-12 como (1+1/n)^(n*-12)");
-disp("   n        |Error");
-function err=etaylor2(n, x)
-    err=[];
-    for i=1:1000:n
-        r=(1+1/i)^(i*x);
-        err((i+999)/1000)(1) = i;
-        err((i+999)/1000)(2) = abs(e12-r);
-    end
-endfunction
-
-disp(etaylor2(10000, -12));
-disp("Este metodo es mas estable, aunque converge mucho mas lento.");
-//~ n        |Error   
-//~ 1.       0.0002380  
-//~ 1001.    3.691D-08  
-//~ 2001.    1.844D-08  
-//~ 3001.    1.229D-08  
-//~ 4001.    9.219D-09  
-//~ 5001.    7.375D-09  
-//~ 6001.    6.146D-09  
-//~ 7001.    5.267D-09  
-//~ 8001.    4.609D-09  
-//~ 9001.    4.097D-09 
+// Falta dar un metodo alternativo (plantear la ec. y aplicar logaritmo a ambos lados.) 
 
 
 /////////////////////////////////////////////////////////////////
@@ -171,7 +147,7 @@ disp("x_{n+1} = x_n + f(x_n)/g(x_n)")
 disp(", donde g(x) = (f(x_n+f(x_n)) - f(x_n))/f(x_n)");
 disp("La funcion g es la pendiente de la funcion entre (x_n, f(x_n)) y el punto auxiliar (x_n+h, f(x_n+h), con h=f(x_n).");
 disp("Cuando se provee un valor lo suficientemente cercano a la raiz, h va a ser pequeño y g(x_n) es una buena aproximacion de f''(x_n).");
-disp("En otras palabras, cuando el valor es elegido correctamente el metodo se comporta como el de Newton, el cual converge.");
+disp("En otras palabras, cuando el valor es elegido correctamente el método se comporta como el de Newton, el cual converge por encontrarse el x inicial cerca de la raíz deseada.");
 
 function xi=steff(f,x0,its,eps)
     if ~exists("eps","local") then eps = %eps; end
