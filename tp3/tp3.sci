@@ -1,9 +1,3 @@
-//LCC - Métodos Numéricos
-//Trabajo Práctico 3
-//Alumno: Martín Villagra
-
-funcprot(0);
-
 /////////////////////////////////////////////////////////////////
 disp("=============Ejercicio 2.(a)=============");
 // La implementación de Newton utilizando las diferencias divididas
@@ -36,12 +30,12 @@ xi=[-1 1 2 4 10 18 25];
 yi=[10 11.5 13.3 24.7 101 64.2 159];
 d=DifDivididasNewton(xi, yi);
 for i=1:length(xi)
-  E(i) = (yi(i)-EvalNewton(xi,d,xi(i)))/yi(i);
+  E(i) = abs((yi(i)-EvalNewton(xi,d,xi(i)))/yi(i));
 end
-disp(max(abs(E)), "Máximo error relativo de la interpolación sobre los puntos: ");
+disp(max(E), "Máximo error relativo de la interpolación sobre los puntos: ");
 // Máximo error relativo de la interpolación sobre los puntos: 5.720D-15
 
-// Devuelve una string representando el polinomio en su forma de newton
+// Devuelve una string representando el polinomio en su forma de Newton
 function s=NewtonString(xi,d)
     n=length(xi)
     p = ""; s = "";
@@ -67,16 +61,15 @@ disp(NewtonString(xi,d), "f(x) ~= ");
 disp("=============Ejercicio 2.(b)=============");
 disp(EvalNewton(xi,d,0), "f(0) ~= ");
 // f(0) ~= 11.033688
-//TODO: Estimar el error
 
 /////////////////////////////////////////////////////////////////
 disp("=============Ejercicio 3.(c)=============");
 disp("Se utilizan los censos de la ciudad de Rosario.");
-disp("No se disponen de 10 pares debido a que sólo se realizaron 7 censos. Fuera de los censos existen estimaciones año a año que utilizan otra función de aproximación distinta a la aquí usada.");
+disp("No se disponen de 10 pares debido a que sólo se encontraron 7 censos. Fuera de los censos existen estimaciones año a año que utilizan otra función de aproximación distinta a la aquí usada.");
 xi=[1947 1960 1970 1980 1991 2001 2010];
 yi=[484021 626845 750455 794127 894645 908163 948312];
 // Fuentes utilizadas:
-// América Latina: Urbanización y Evolución de la Población Urbana 1950-2000, CEPAL/CELADE
+// América Latina: Urbanización y Evolución de la Población Urbana 1950-2000, CEPAL/CELADE.
 // Población de la ciudad de Rosario, Dirección General de Estadística. Elaboración propia en base a datos INDEC-IPEC y Dirección Gral. de Topografía y Catastro.
 
 function [c, a, f]=MinCuadsExpFit(xi, yi)
@@ -92,12 +85,12 @@ endfunction
 [c, a, f] = MinCuadsExpFit(xi, yi);
 E = [];
 for i=1:length(xi)
-  E(i) = (yi(i)-f(xi(i)))/yi(i);
+  E(i) = abs((yi(i)-f(xi(i)))/yi(i));
 end
-disp(max(abs(E)), "Máximo error relativo de la aproximación sobre los puntos: ");
-// Máximo error de la aproximación sobre los puntos: 0.1160555.
+disp(max(E), "Máximo error relativo de la aproximación sobre los puntos: ");
+// Máximo error relativo de la aproximación sobre los puntos: 0.1160555.
 disp(round(f(2020)), "Población estimada para el 2020: ");
 // Población estimada para el 2020: 1135190.
 
-disp("Este resultado es exagerado. Según la IPEC, para el 2020 se espera contar con apenas un millón de habitantes (por lo que el censo debería tener un recuento menor a eso). Este exageración posiblemente se deba a que Rosario no está creciendo como ciudad, puesto que cada vez más y más personas van a vivir a ciudades del Gran Rosario, como Funes (que experimento un crecimiento de casi el doble de su población en la última década). Este comportamiento no ocurría durante los primeros años de la ciudad, por lo que es difícil reflejar este cambio con una aproximación exponencial.");
-// Fuente: Población estimada al 1° de julio de cada año calendario, según departamento y localidad. Provincia de Santa Fe. Años 2010-2025, IPEC
+disp("Este resultado es exagerado. Según la IPEC, para el 2020 se espera contar con apenas un millón de habitantes (por lo que el censo debería tener un recuento menor a eso). Este exageración posiblemente se deba a que Rosario no está creciendo como ciudad, puesto que cada vez más y más personas van a vivir a ciudades del Gran Rosario, como Funes (que experimento un crecimiento de casi el doble de su población en la última década). Este comportamiento no ocurría durante los primeros años de la ciudad, por lo que es difícil reflejar este cambio con una aproximación exponencial. De hecho si quitamos los primeros años al hacer el método la predicción se vuelve más razonable.");
+// Fuente: Población estimada al 1° de julio de cada año calendario, según departamento y localidad. Provincia de Santa Fe. Años 2010-2025, IPEC.
